@@ -1,5 +1,8 @@
+import 'package:chat/presentation/providers/auth_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -14,16 +17,19 @@ class UsersScreen extends StatefulWidget {
 
 class _UsersScreenState extends State<UsersScreen> {
 
-  RefreshController _refreshController = RefreshController(initialRefresh: false);
+  final RefreshController _refreshController = RefreshController(initialRefresh: false);
 
 
   @override
   Widget build(BuildContext context) {
 
-    final List<User> usuarios = [
-      User(uid: '1', nombre: 'Juan', email: 'test1@test.com', online: true),
-      User(uid: '2', nombre: 'Javier', email: 'test2@test.com', online: false),
-      User(uid: '3', nombre: 'Adrian', email: 'test3@test.com', online: true),
+    final authProvider = context.watch<AuthProvider>();
+    final usuario = authProvider.usuario;
+
+    final List<Usuario> usuarios = [
+      Usuario(uid: '1', nombre: 'Juan', email: 'test1@test.com', online: true),
+      Usuario(uid: '2', nombre: 'Javier', email: 'test2@test.com', online: false),
+      Usuario(uid: '3', nombre: 'Adrian', email: 'test3@test.com', online: true),
     ];
       
     return Scaffold(
@@ -33,10 +39,17 @@ class _UsersScreenState extends State<UsersScreen> {
         surfaceTintColor: Colors.white,
         shadowColor: Colors.black,
         leading: IconButton(
-          onPressed: () {},
+          onPressed: () {
+
+            //TODO: desconectar el socket server
+
+            context.read<AuthProvider>().logout();
+            context.pushReplacement('/login');
+
+          },
           icon: const Icon(Icons.exit_to_app_rounded)
         ),
-        title: const Text('Mi Nombre'),
+        title: Text(usuario.nombre),
         actions: [
           IconButton(
             onPressed: () {}, 
@@ -76,7 +89,7 @@ class _ListViewUsuarios extends StatelessWidget {
     required this.usuarios,
   });
 
-  final List<User> usuarios;
+  final List<Usuario> usuarios;
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +107,7 @@ class _UsuarioListTile extends StatelessWidget {
     required this.usuario,
   });
 
-  final User usuario;
+  final Usuario usuario;
 
   @override
   Widget build(BuildContext context) {

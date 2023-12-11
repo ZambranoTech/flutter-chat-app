@@ -1,4 +1,8 @@
+import 'package:chat/config/helpers/mostrar_alerta.dart';
+import 'package:chat/presentation/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 import '../../widgets/widgets.dart';
 
@@ -57,6 +61,9 @@ class __FormState extends State<_Form> {
 
   @override
   Widget build(BuildContext context) {
+
+    final authProvider = context.watch<AuthProvider>();
+
     return Column(
       children: [
 
@@ -76,10 +83,23 @@ class __FormState extends State<_Form> {
 
         BtnAzul(
           text: 'Ingrese',
-          onPressed: () {
-            print(emailCtrl.text);
-            print(passCtrl.text);
-          },
+          onPressed: authProvider.autenticando
+          ? null
+          : () async {
+              FocusScope.of(context).unfocus();
+              final loginOk = await authProvider.login(emailCtrl.text.trim(), passCtrl.text.trim());
+              
+              if (loginOk) {
+                //TODO: Conectar a nuestro socket Server
+                context.pushReplacement('/users');
+
+                return;
+              } 
+
+              mostrarAlerta(context, 'Login Incorrecto', 'Revise sus credenciales nuevamente');
+
+
+            },
         )
       ],
     );

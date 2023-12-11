@@ -2,11 +2,15 @@ import 'package:chat/presentation/screens/screens.dart';
 import 'package:go_router/go_router.dart';
 
 final appRouter = GoRouter(
-  initialLocation: '/chat',
+  initialLocation: '/',
   routes: [
 
     GoRoute(
       path: '/',
+      builder: (context, state) => const LoadingScreen(),
+    ),
+    GoRoute(
+      path: '/login',
       builder: (context, state) => const LoginScreen(),
     ),
     GoRoute(
@@ -26,7 +30,7 @@ final appRouter = GoRouter(
       builder: (context, state) => const UsersScreen(),
     ),
 
-  ]
+  ],
   
   
 );
