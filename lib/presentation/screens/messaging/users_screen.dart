@@ -1,4 +1,7 @@
 import 'package:chat/presentation/providers/auth_provider.dart';
+import 'package:chat/presentation/providers/chat_provider.dart';
+import 'package:chat/presentation/providers/providers.dart';
+import 'package:chat/shared/services/usuarios_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -18,20 +21,23 @@ class UsersScreen extends StatefulWidget {
 class _UsersScreenState extends State<UsersScreen> {
 
   final RefreshController _refreshController = RefreshController(initialRefresh: false);
+  List<Usuario> usuarios = [];
 
+
+  @override
+  void initState() {
+    super.initState();
+    _cargarUsuarios();
+  }
 
   @override
   Widget build(BuildContext context) {
 
     final authProvider = context.watch<AuthProvider>();
+    final socketProvider = context.watch<SocketProvider>();
+
     final usuario = authProvider.usuario;
 
-    final List<Usuario> usuarios = [
-      Usuario(uid: '1', nombre: 'Juan', email: 'test1@test.com', online: true),
-      Usuario(uid: '2', nombre: 'Javier', email: 'test2@test.com', online: false),
-      Usuario(uid: '3', nombre: 'Adrian', email: 'test3@test.com', online: true),
-    ];
-      
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -41,7 +47,7 @@ class _UsersScreenState extends State<UsersScreen> {
         leading: IconButton(
           onPressed: () {
 
-            //TODO: desconectar el socket server
+            socketProvider.disconnect();
 
             context.read<AuthProvider>().logout();
             context.pushReplacement('/login');
@@ -53,8 +59,9 @@ class _UsersScreenState extends State<UsersScreen> {
         actions: [
           IconButton(
             onPressed: () {}, 
-            icon: Icon(Icons.check_circle_rounded, color: Colors.blue[400],)
-            // icon: Icon(Icons.offline_bolt, color: Colors.red,)
+            icon: (socketProvider.serverStatus == ServerStatus.online)
+            ? Icon(Icons.check_circle_rounded, color: Colors.blue[400],)
+            : const Icon(Icons.offline_bolt, color: Colors.red,)
           )
         ],
 
@@ -77,8 +84,10 @@ class _UsersScreenState extends State<UsersScreen> {
   }
 
   _cargarUsuarios() async {
-   await Future.delayed(Duration(milliseconds: 1000));
-    // if failed,use refreshFailed()
+    usuarios = await UsuariosService.getUsuarios();
+    setState(() {});
+  //  await Future.delayed(Duration(milliseconds: 1000));
+  //  if failed,use refreshFailed()
     _refreshController.refreshCompleted();
   }
 
@@ -125,6 +134,10 @@ class _UsuarioListTile extends StatelessWidget {
           shape: BoxShape.circle
         ),
       ),
+      onTap: () {
+        context.read<ChatProvider>().usuarioPara = usuario;
+        context.push('/chat');
+      },
     );
   }
 }

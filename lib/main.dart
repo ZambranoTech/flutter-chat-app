@@ -2,6 +2,8 @@ import 'package:chat/config/constants/environment.dart';
 import 'package:chat/config/router/app_router.dart';
 import 'package:chat/config/theme/app_theme.dart';
 import 'package:chat/presentation/providers/auth_provider.dart';
+import 'package:chat/presentation/providers/providers.dart';
+import 'package:chat/presentation/providers/socket_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -17,7 +19,9 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: ( _ ) => AuthProvider(),)
+        ChangeNotifierProvider(create: ( _ ) => AuthProvider(),),
+        ChangeNotifierProvider(create: ( _ ) => SocketProvider(),),
+        ChangeNotifierProvider(create: ( _ ) => ChatProvider(),),
       ],
       child: MaterialApp.router(
         routerConfig: appRouter,

@@ -1,4 +1,6 @@
+import 'package:chat/presentation/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ChatMessage extends StatelessWidget {
 
@@ -18,6 +20,8 @@ class ChatMessage extends StatelessWidget {
 
     final colors = Theme.of(context).colorScheme;
 
+    final authProvider = context.read<AuthProvider>();
+
     // Ajusta la luminosidad según tus preferencias
     HSLColor hslColor = HSLColor.fromColor(colors.primary);
     hslColor = hslColor.withLightness(0.5);
@@ -27,7 +31,7 @@ class ChatMessage extends StatelessWidget {
       child: SizeTransition(
         sizeFactor: CurvedAnimation(parent: animationController, curve: Curves.easeOut),
         child: Container(
-          child: uid == '3' 
+          child: uid == authProvider.usuario.uid 
           ? _MyMessage(hslColor: hslColor, texto: texto)
           : _NotMyMessage(texto: texto),
         ),

@@ -21,8 +21,8 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<String?> getToken() async {
-    return await keyValueStorageService.getValue('token');
+  static Future<String?> getToken() async {
+    return await KeyValueStorageServiceImpl().getValue('token');
   }
 
   Future<bool> isLoggedIn() async {

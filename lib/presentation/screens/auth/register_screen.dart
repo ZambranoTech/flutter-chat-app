@@ -1,5 +1,5 @@
 import 'package:chat/config/helpers/mostrar_alerta.dart';
-import 'package:chat/presentation/providers/auth_provider.dart';
+import 'package:chat/presentation/providers/providers.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -63,6 +63,7 @@ class _FormState extends State<_Form> {
   @override
   Widget build(BuildContext context) {
     final authProvider = context.watch<AuthProvider>();
+    final socketProvider = context.watch<SocketProvider>();
 
 
     return Column(
@@ -96,7 +97,7 @@ class _FormState extends State<_Form> {
                       .then((value) {
                         final (registered, msg) = value;
                     if (registered) {
-                      //TODO: Conectar socket server
+                      socketProvider.connect();
                       context.pushReplacement('/users');
                       return;
                     }
